@@ -1,0 +1,2 @@
+patient_id	amka	first_name	last_name	department_id	department_name	hospitalization_count_same_department	total_hospitalization_cost
+1	28010000001	Γεώργιος	Παπαδόπουλος	1	Καρδιολογία	4	14351.33

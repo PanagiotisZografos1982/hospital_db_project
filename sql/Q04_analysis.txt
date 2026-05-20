@@ -1,0 +1,44 @@
+Q04 Analysis
+============
+
+ΠΡΟΒΛΗΜΑ FAN-OUT (διορθώθηκε):
+Στην αρχική έκδοση, τα AVG(dr.medical_care) και AVG(hr.overall_experience)
+υπολογίζονταν στο ίδιο GROUP BY με απευθείας JOIN μεταξύ doctor_review και
+hospitalization_review. Αυτό δημιουργεί fan-out: κάθε doctor_review row
+πολλαπλασιάζεται με τον αριθμό των hospitalization_review rows της ίδιας νοσηλείας,
+με αποτέλεσμα διογκωμένο (λάθος) AVG.
+
+ΛΥΣΗ:
+Διαχωρισμός σε δύο ανεξάρτητα CTEs:
+- doctor_review_avg: υπολογίζει review_count και avg_doctor_medical_care
+  μόνο από τον πίνακα doctor_review.
+- hospitalization_review_avg: υπολογίζει avg_overall_experience, avg_nursing_care,
+  avg_cleanliness, avg_food με JOIN μεταξύ doctor_review και hospitalization_review.
+Τα δύο CTEs ενώνονται μετά με LEFT JOIN στον ιατρό, χωρίς fan-out.
+
+EXPLAIN ΑΝΑΛΥΣΗ:
+
+Κανονική εκτέλεση (χωρίς FORCE INDEX):
+- Ο optimizer επιλέγει αυτόματα το idx_doctor_review_doctor για το φιλτράρισμα
+  με WHERE dr.doctor_id = 11, αποφεύγοντας full table scan.
+- Το idx_hospitalization_review_hosp χρησιμοποιείται για το JOIN με doctor_review.
+- Εκτιμώμενο κόστος: χαμηλό λόγω selective index (ένας μόνο ιατρός).
+
+FORCE INDEX εκτέλεση:
+- Αναγκάζουμε ρητά τον optimizer να χρησιμοποιήσει:
+  * idx_doctor_review_doctor στον πίνακα doctor_review
+  * idx_hospitalization_review_hosp στον πίνακα hospitalization_review
+- Το query plan παραμένει παρόμοιο με την κανονική εκτέλεση, γιατί ο optimizer
+  ήδη επέλεγε αυτά τα indexes.
+
+ΣΥΜΠΕΡΑΣΜΑΤΑ:
+1. Το fan-out bug στην αρχική έκδοση παρήγαγε λανθασμένα AVG αποτελέσματα —
+   η διόρθωση με CTEs εξασφαλίζει ακρίβεια.
+2. Τα indexes idx_doctor_review_doctor και idx_hospitalization_review_hosp
+   δικαιολογούνται πλήρως: χωρίς αυτά, κάθε εκτέλεση του Q04 θα απαιτούσε
+   full scan σε doctor_review και hospitalization_review.
+3. Σε μεγάλο dataset (χιλιάδες reviews), η διαφορά κόστους μεταξύ index scan
+   και full scan γίνεται σημαντική — ο βαθμός βελτίωσης εξαρτάται από τον
+   αριθμό εγγραφών ανά ιατρό.
+4. Η FORCE INDEX έκδοση επιβεβαιώνει ότι τα indexes σχεδιάστηκαν σωστά και
+   χρησιμοποιούνται αποτελεσματικά από τον query optimizer.

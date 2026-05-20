@@ -1,0 +1,14 @@
+Q06 Analysis
+
+The query retrieves the hospitalization history of patient_id = 1, including ICD-10 admission and discharge diagnoses, total hospitalization cost, hospitalization-level review averages, and doctor-level medical-care averages.
+
+Normal execution:
+- Measured execution time: 0.00897550 seconds.
+- The optimizer uses indexes on patient_id, hospitalization_id and review-related foreign keys.
+
+FORCE INDEX execution:
+- Measured execution time: 0.00223460 seconds.
+- The FORCE INDEX version explicitly guides the optimizer toward the intended indexes.
+
+Comparison:
+The two execution plans are similar because the optimizer already uses suitable indexes in the normal query. The FORCE INDEX version is mainly used as a comparative/validation query rather than because the normal plan is inefficient. In this run, the FORCE INDEX version was slightly faster. NULL review values are expected for hospitalizations without a recorded review, because LEFT JOIN is used to preserve the full hospitalization history.

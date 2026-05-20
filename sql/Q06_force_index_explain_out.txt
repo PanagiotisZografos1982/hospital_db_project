@@ -1,0 +1,10 @@
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+1	PRIMARY	p	const	PRIMARY	PRIMARY	4	const	1	
+1	PRIMARY	h	ref	idx_hospitalization_patient	idx_hospitalization_patient	4	const	6	Using where; Using filesort
+1	PRIMARY	d	eq_ref	PRIMARY	PRIMARY	4	hospital_db.h.department_id	1	
+1	PRIMARY	adm	eq_ref	PRIMARY	PRIMARY	82	hospital_db.h.admission_icd10_code	1	
+1	PRIMARY	dis	eq_ref	PRIMARY	PRIMARY	82	hospital_db.h.discharge_icd10_code	1	Using where
+1	PRIMARY	<derived2>	ref	key0	key0	5	hospital_db.h.hospitalization_id	2	
+1	PRIMARY	<derived3>	ref	key0	key0	5	hospital_db.h.hospitalization_id	10	
+2	LATERAL DERIVED	hospitalization_review	ref	idx_hospitalization_review_hosp	idx_hospitalization_review_hosp	4	hospital_db.h.hospitalization_id	1	
+3	DERIVED	doctor_review	ALL	idx_doctor_review_hosp	NULL	NULL	NULL	300	Using temporary; Using filesort

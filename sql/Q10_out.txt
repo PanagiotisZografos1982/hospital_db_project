@@ -1,0 +1,4 @@
+substance_1_id	substance_1_name	substance_2_id	substance_2_name	co_prescription_count
+1	Liquid Extract From Viscum Album Subsp. Abietis Var Abies Alba (1:20), Extraction Solvents: Water For Injection And Sodium Chloride (99.91:0.09)	2	Vitamin A Concentrate (Oily Form), Synthetic	2
+1	Liquid Extract From Viscum Album Subsp. Abietis Var Abies Alba (1:20), Extraction Solvents: Water For Injection And Sodium Chloride (99.91:0.09)	3	Acetylsalicylic Acid	2
+2	Vitamin A Concentrate (Oily Form), Synthetic	3	Acetylsalicylic Acid	1

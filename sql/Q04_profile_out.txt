@@ -1,0 +1,8 @@
+doctor_id	first_name	last_name	specialty	doctor_rank	review_count	avg_doctor_medical_care	avg_hospitalization_medical_care	avg_overall_hospitalization_experience	avg_nursing_care	avg_cleanliness	avg_food
+11	Παναγιώτης	Πετρίδης	Χειρουργική	Διευθυντής	4	5.00	2.00	1.00	3.00	4.00	5.00
+doctor_id	first_name	last_name	specialty	doctor_rank	review_count	avg_doctor_medical_care	avg_hospitalization_medical_care	avg_overall_hospitalization_experience	avg_nursing_care	avg_cleanliness	avg_food
+11	Παναγιώτης	Πετρίδης	Χειρουργική	Διευθυντής	4	5.00	2.00	1.00	3.00	4.00	5.00
+Query_ID	Duration	Query
+1	0.00019310	SET @target_doctor_id := 11
+2	0.00169350	WITH doctor_review_avg AS (\n    SELECT\n        dr.doctor_id,\n        COUNT(DISTINCT dr.doctor_review_id) AS review_count,\n        ROUND(AVG(dr.medical_care), 2) AS avg_doctor_medical_care\n    FROM doctor_review dr\n    WHERE dr.doctor_id = @target_doctor_id\n    GROUP BY dr.doctor_id\n),\nhospitalizatio
+3	0.00147960	WITH doctor_review_avg AS (\n    SELECT\n        dr.doctor_id,\n        COUNT(DISTINCT dr.doctor_review_id) AS review_count,\n        ROUND(AVG(dr.medical_care), 2) AS avg_doctor_medical_care\n    FROM doctor_review dr FORCE INDEX (idx_doctor_review_doctor)\n    WHERE dr.doctor_id = @target_doctor_id\n    
